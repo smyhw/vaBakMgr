@@ -1,0 +1,26 @@
+{
+  //需要连接的服务器ip
+  "ip": "127.0.0.1",
+  //需要连接的服务器端口
+  "port": 25565,
+  //服务器版本,目前支持1.12.2到1.18.2
+  "version": "1.12.2",
+  //如果是离线登入，则填写玩家id
+  //如果是在线登入，则填写登入邮箱
+  //*暂时不支持微软账户
+  "username": "robot",
+  //如果是在线登入，填入密码
+  //如果是离线登入，填入null
+  "passwd": "null",
+  //需要备份的世界文件夹
+  "save_world_dir": "./../world",
+  //如果你的服务器需要登入之类的，可以在这里填写连接后自动执行的指令
+  //支持填写多个，支持按顺序执行
+  "init_cmd": ["/l 123456","robot login","/me hello world"],
+  //当还原备份时，如何关闭你的服务器？
+  //这将执行为系统shell
+  "stop_cmd": "taskkill /fi \"WINDOWTitle eq hello_server*\"",
+  //当还原成功后，如何重启你的服务器？
+  //这将执行为系统shell
+  "start_cmd": "cmd /k \"cd C:\\mc && start start.cmd\""
+}
