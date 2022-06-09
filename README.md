@@ -58,3 +58,8 @@
 * 权限管理
 
 # 截图
+
+# 依赖
+本项目依赖以下开源项目
+* [google](https://github.com/google) 的 [GSON](https://github.com/google/gson)，以 [Apache-2.0 license](https://www.apache.org/licenses/LICENSE-2.0)开源  
+* [Defective4](https://github.com/Defective4) 的 [Another Minecraft Chat Client](https://github.com/Defective4/Another-Minecraft-Chat-Client)，以 [Apache-2.0 license](https://www.apache.org/licenses/LICENSE-2.0)开源
