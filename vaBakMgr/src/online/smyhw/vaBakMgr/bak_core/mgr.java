@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class mgr {
@@ -62,13 +63,35 @@ public class mgr {
         File f = new File(to);
         String tmp1 = f.getName();
         String from = "./save/"+id+"/"+tmp1;
-
+        utils.del_dir(to);
         try {
             utils.copy_dir(from,to);
         } catch (IOException e) {
             utils.warning("警告,还原过程中出现错误! -> "+e.getMessage(),2);
             System.exit(1);
         }
+        return true;
+    }
+
+    /**
+     * 删除某个备份
+     * @param id
+     * @return
+     */
+    public static boolean del(String id){
+        if(is_running){
+            utils.warning("拒绝执行删除 -> 上一次备份尚未完成...");
+            return false;
+        }
+        Map need_to_del = null;
+        for(Map one : (List<Map>) mgr.get_data_file().get("data")){
+            if(one.get("id").equals(id)){need_to_del = one;}
+        }
+        if(need_to_del==null){utils.warning("不该出现的异常 -> 找不到目标备份id");return false;}
+        ((List<?>) mgr.get_data_file().get("data")).remove(need_to_del);
+        flush_data_file();
+        //删除文件
+        utils.del_dir("./save/"+id);
         return true;
     }
 

@@ -22,9 +22,10 @@ public class cmd_mgr {
         switch (cmd_0){
             case"#vbm":
                 Main.client.send_msg("=====vaBakMgr=====");
-                Main.client.send_msg("+ #bk <备注>   创建备份");
-                Main.client.send_msg("+ #re <备份ID> 还原备份");
-                Main.client.send_msg("+ #ls         查看备份列表");
+                Main.client.send_msg("+ #bk <备注>    创建备份");
+                Main.client.send_msg("+ #re <备份ID>  还原备份");
+                Main.client.send_msg("+ #ls          查看备份列表");
+                Main.client.send_msg("+ #del <备份ID> 删除备份");
                 return;
             case"#ls":
                 Main.client.send_msg("=====vaBakMgr=====");
@@ -72,7 +73,7 @@ public class cmd_mgr {
 
                 //判定id是否存在
                 boolean is_exist = false;
-                for(HashMap one : (List<HashMap>) mgr.get_data_file().get("data")){
+                for(Map one : (List<Map>) mgr.get_data_file().get("data")){
                     if(one.get("id").equals(id)){is_exist=true;}
                 }
                 if(!is_exist){
@@ -133,6 +134,26 @@ public class cmd_mgr {
                     utils.log("等待服务器启动...");
                     try {Thread.sleep(10000);} catch (InterruptedException e) {e.printStackTrace();}
                 }
+                return;
+            case "#del":
+                if(cmd.split(" ").length!=2){
+                    Main.client.send_msg("用法: #del <备份id>");
+                    return;
+                }
+                //解析id
+                id = cmd.split(" ")[1];
+
+                //判定id是否存在
+                is_exist = false;
+                for(Map one : (List<Map>) (mgr.get_data_file().get("data"))){
+                    if(one.get("id").equals(id)){is_exist=true;}
+                }
+                if(!is_exist){
+                    utils.warning("备份id<"+id+">不存在");
+                    return;
+                }
+                if(mgr.del(id)){Main.client.send_msg("成功删除备份<"+id+">");}
+                else{utils.warning("删除备份<"+id+">失败");}
                 return;
         }
     }

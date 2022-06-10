@@ -21,7 +21,10 @@ public class Main {
 
         log("Hello vaBakMgr !");
 
-        init_client();
+        if(!init_client()){
+            utils.warning("无法连接到服务器，退出...");
+            System.exit(1);
+        };
 
         //处理init_cmds
         List<String> init_cmds = null;

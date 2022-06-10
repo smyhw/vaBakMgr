@@ -1,3 +1,3 @@
 echo off
-title universal_terminal
+title vaBakMgr
 java -cp "adapter/*;vbm.jar" online.smyhw.vaBakMgr.Main

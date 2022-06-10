@@ -29,7 +29,10 @@ public class AMC implements base {
             }else{
                 cl.connect(AuthType.Mojang,username,passwd);
             }
-
+            if(!cl.isConnected()){
+                utils.warning("登入失败...");
+                return false;
+            }
         } catch (IOException e) {
             utils.warning("和服务器建立连接失败 --> "+e.getMessage(),2);
 //            e.printStackTrace();
