@@ -3,6 +3,7 @@ package online.smyhw.vaBakMgr;
 import com.google.gson.Gson;
 import online.smyhw.vaBakMgr.adapter.AMC;
 import online.smyhw.vaBakMgr.adapter.base;
+import online.smyhw.vaBakMgr.adapter.mcprotocollib;
 
 import java.io.*;
 import java.nio.file.*;
@@ -10,6 +11,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class utils {
 
@@ -89,8 +91,50 @@ public class utils {
     public static base get_client(String ip, int port, String version, String username, String passwd){
         base re = null;
         switch(version){
+            case"1.8":
+            case"1.9":
+            case"1.9.1":
+            case"1.9.2":
+            case"1.9.4":
+            case"1.10":
+            case"1.11":
+            case"1.11.2":
+            case"1.12":
+            case"1.12.1":
             case"1.12.2":
+            case"1.13":
+            case"1.13.1":
+            case"1.14":
+            case"1.14.1":
+            case"1.14.2":
+            case"1.14.3":
+            case"1.14.4":
+            case"1.15":
+            case"1.15.1":
+            case"1.15.2":
+            case"1.16.3":
+            case"1.16.5":
+            case"1.17":
+            case"1.17.1":
+            case"1.18.1":
+            case"1.18.2":
                 re = new AMC();
+                break;
+            case"1.19":
+                re = new mcprotocollib();
+            default:
+                utils.warning("未知的协议版本 -> "+version);
+                utils.warning("请手动指定adapter ： (AMC/geyser)");
+                Scanner st = new Scanner(System.in);
+                String res = st.nextLine();
+                if(res.equals("AMC")){
+                    re = new AMC();
+                }else if (res.equals("geyser")){
+                    re= new mcprotocollib();
+                }else{
+                    utils.warning("未知的adapter -> "+res);
+                    return null;
+                }
         }
         boolean tmp1 = re.init_ar(ip,port,version,username,passwd);
         if(tmp1){return re;}else{return null;}
