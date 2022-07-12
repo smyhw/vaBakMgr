@@ -28,16 +28,22 @@ public class utils {
         Path target = Paths.get(to);
         Files.walkFileTree(source, new SimpleFileVisitor<Path>() {
             @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
-                    throws IOException {
-                Files.createDirectories(target.resolve(source.relativize(dir)));
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                try {
+                    Files.createDirectories(target.resolve(source.relativize(dir)));
+                } catch (IOException e) {
+                    utils.warning("文件夹复制异常 —> "+e.getMessage());
+                }
                 return FileVisitResult.CONTINUE;
             }
 
             @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-                    throws IOException {
-                Files.copy(file, target.resolve(source.relativize(file)), options);
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs){
+                try {
+                    Files.copy(file, target.resolve(source.relativize(file)), options);
+                } catch (IOException e) {//咱们需要尽可能多地完成任务
+                    utils.warning("文件夹文件复制异常 —> "+e.getMessage());
+                }
                 return FileVisitResult.CONTINUE;
             }
         });
@@ -122,6 +128,7 @@ public class utils {
                 break;
             case"1.19":
                 re = new mcprotocollib();
+                break;
             default:
                 utils.warning("未知的协议版本 -> "+version);
                 utils.warning("请手动指定adapter ： (AMC/geyser)");

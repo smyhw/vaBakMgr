@@ -20,6 +20,7 @@ import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoBuilder;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoHandler;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerPingTimeHandler;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundPlayerChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundSystemChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatPacket;
 import com.github.steveice10.opennbt.tag.builtin.ByteTag;
@@ -43,28 +44,33 @@ import com.github.steveice10.packetlib.packet.Packet;
 import com.github.steveice10.packetlib.tcp.TcpClientSession;
 import com.github.steveice10.packetlib.tcp.TcpServer;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import online.smyhw.vaBakMgr.utils;
 
+import java.net.Proxy;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class mcprotocollib implements base {
-    Session client;
     private List<String> recv_msg_list = new CopyOnWriteArrayList();
+    boolean is_ready = false;
+    Session client;
     @Override
     public boolean init_ar(String ip, int port, String version, String username, String passwd) {
         MinecraftProtocol protocol;
-        if (passwd == null) {
+        if (passwd!=null) {
             try {
                 AuthenticationService authService = new MojangAuthenticationService();
                 authService.setUsername(username);
                 authService.setPassword(passwd);
-//                authService.setProxy(AUTH_PROXY);
+                authService.setProxy(Proxy.NO_PROXY);
                 authService.login();
 
                 protocol = new MinecraftProtocol(authService.getSelectedProfile(), authService.getAccessToken());
-                utils.log("Successfully authenticated user.");
+                System.out.println("Successfully authenticated user.");
             } catch (RequestException e) {
                 e.printStackTrace();
                 return false;
@@ -74,7 +80,7 @@ public class mcprotocollib implements base {
         }
 
         SessionService sessionService = new SessionService();
-//        sessionService.setProxy(AUTH_PROXY);
+        sessionService.setProxy(Proxy.NO_PROXY);
 
         client = new TcpClientSession(ip, port, protocol, null);
         client.setFlag(MinecraftConstants.SESSION_SERVICE_KEY, sessionService);
@@ -82,17 +88,21 @@ public class mcprotocollib implements base {
             @Override
             public void packetReceived(Session session, Packet packet) {
                 if (packet instanceof ClientboundLoginPacket) {
-                    session.send(new ServerboundChatPacket("Hello, this is a test of MCProtocolLib.", Instant.now().toEpochMilli(), 0, new byte[0], false));
-                } else if (packet instanceof ClientboundSystemChatPacket) {
-                    Component message = ((ClientboundSystemChatPacket) packet).getContent();
-                    recv_msg_list.add(message+"");
-                    utils.log("Received Message: " + message);
+                    is_ready = true;
+//                    session.send(new ServerboundChatPacket("H1ello, this is a test of MCProtocolLib.", Instant.now().toEpochMilli(), 0, new byte[0], false));
+                } else if (packet instanceof ClientboundPlayerChatPacket) {
+                    ClientboundPlayerChatPacket pkg = ((ClientboundPlayerChatPacket) packet);
+                    Component message = pkg.getUnsignedContent() == null ? pkg.getSignedContent() : pkg.getUnsignedContent();
+                    String plain = PlainTextComponentSerializer.plainText().serialize(message);
+                    plain = "<"+PlainTextComponentSerializer.plainText().serialize(pkg.getSenderName())+"> "+plain;
+//                    System.out.println("Received Message: " + plain);
+                    recv_msg_list.add(plain+"");
                 }
             }
 
             @Override
             public void disconnected(DisconnectedEvent event) {
-                utils.warning("[mcprotocollib]连接已断开 --> "+event.getReason(),2);
+                System.out.println("[mcprotocollib]Disconnected: " + event.getReason());
                 if (event.getCause() != null) {
                     event.getCause().printStackTrace();
                 }
@@ -100,6 +110,13 @@ public class mcprotocollib implements base {
         });
 
         client.connect();
+        while(!is_ready){
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
         return true;
     }
 

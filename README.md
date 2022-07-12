@@ -7,7 +7,7 @@
 ***
 * 利用机器人实现游戏内指令交互
 * 支持离线账户登入、mojang账号登入和皮肤站登入
-* 1.12.2-1.18全版本支持
+* 1.12.2-1.19全版本支持
 * 不对服务端做任何侵入性操作
 
 # 食用方法
@@ -81,3 +81,4 @@ A: 目前是为官方服务端设计的，官方服务端存档只有一个文�
 本项目依赖以下开源项目
 * [google](https://github.com/google) 的 [GSON](https://github.com/google/gson)，以 [Apache-2.0 license](https://www.apache.org/licenses/LICENSE-2.0)开源  
 * [Defective4](https://github.com/Defective4) 的 [Another Minecraft Chat Client](https://github.com/Defective4/Another-Minecraft-Chat-Client)，以 [Apache-2.0 license](https://www.apache.org/licenses/LICENSE-2.0)开源
+* [间歇泉项目](https://github.com/GeyserMC) 的 协议部分 ，以 [MIT](https://github.com/GeyserMC/MCProtocolLib/blob/master/LICENSE.txt)开源
