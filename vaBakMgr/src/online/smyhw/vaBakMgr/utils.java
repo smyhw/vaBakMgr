@@ -56,12 +56,16 @@ public class utils {
     public static boolean del_dir(String path){
         File directory = new File(path);
         if (!directory.isDirectory()){
-            directory.delete();
+            if(!directory.delete()){
+                utils.warning("文件夹删除异常 ->" +directory.getAbsolutePath());
+            }
         } else{
             File [] files = directory.listFiles();
             // 空文件夹
             if (files.length == 0){
-                directory.delete();
+                if(!directory.delete()){
+                    utils.warning("文件夹删除异常 ->" +directory.getAbsolutePath());
+                }
                 return true;
             }
             // 删除子文件夹和子文件
@@ -69,11 +73,15 @@ public class utils {
                 if (file.isDirectory()){
                     del_dir(file.getPath());
                 } else {
-                    file.delete();
+                    if(!file.delete()){
+                        utils.warning("文件删除异常 ->" +file.getAbsolutePath());
+                    }
                 }
             }
             // 删除文件夹自己
-            directory.delete();
+            if(!directory.delete()){
+                utils.warning("文件夹删除异常 ->" +directory.getAbsolutePath());
+            }
         }
         return true;
     }

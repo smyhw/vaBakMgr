@@ -58,6 +58,8 @@ public class mcprotocollib implements base {
     private List<String> recv_msg_list = new CopyOnWriteArrayList();
     boolean is_ready = false;
     Session client;
+
+    boolean is_disconnect = false;
     @Override
     public boolean init_ar(String ip, int port, String version, String username, String passwd) {
         MinecraftProtocol protocol;
@@ -102,6 +104,7 @@ public class mcprotocollib implements base {
 
             @Override
             public void disconnected(DisconnectedEvent event) {
+                is_disconnect = true;
                 System.out.println("[mcprotocollib]Disconnected: " + event.getReason());
                 if (event.getCause() != null) {
                     event.getCause().printStackTrace();
@@ -111,6 +114,7 @@ public class mcprotocollib implements base {
 
         client.connect();
         while(!is_ready){
+            if (is_disconnect){return false;}
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {

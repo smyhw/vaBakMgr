@@ -58,12 +58,13 @@ public class mgr {
             utils.warning("拒绝执行还原 -> 上一次备份尚未完成...");
             return false;
         }
-
+        //获取并删除服务端中的存档
         String to = (String) utils.get_config().get("save_world_dir");
         File f = new File(to);
         String tmp1 = f.getName();
         String from = "./save/"+id+"/"+tmp1;
         utils.del_dir(to);
+        //将需要备份的存档还原回去
         try {
             utils.copy_dir(from,to);
         } catch (IOException e) {

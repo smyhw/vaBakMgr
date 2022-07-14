@@ -89,7 +89,7 @@ public class cmd_mgr {
                 try {
                     String stop_cmd  = (String) utils.get_config().get("stop_cmd");
                     utils.log("run system cmd -> "+stop_cmd);
-                    Runtime.getRuntime().exec(stop_cmd);
+                    Runtime.getRuntime().exec(stop_cmd).waitFor();
                 } catch (IOException e) {
                     utils.warning("关闭服务器失败，异常 -> "+e.getMessage());
 //                    e.printStackTrace();
@@ -97,6 +97,9 @@ public class cmd_mgr {
                 }catch (ClassCastException e){
                     utils.warning("读取stop_cmd配置项失败，请检查配置文件 -> "+e.getMessage());
 //                    e.printStackTrace();
+                    return;
+                } catch (InterruptedException e) {
+                    utils.warning("关服指令被异常终止 -> "+e.getMessage());
                     return;
                 }
                 utils.log("关闭服务器执行完成");
