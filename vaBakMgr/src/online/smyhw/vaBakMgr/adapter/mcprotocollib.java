@@ -50,6 +50,7 @@ import online.smyhw.vaBakMgr.utils;
 
 import java.net.Proxy;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -93,12 +94,10 @@ public class mcprotocollib implements base {
                     is_ready = true;
 //                    session.send(new ServerboundChatPacket("H1ello, this is a test of MCProtocolLib.", Instant.now().toEpochMilli(), 0, new byte[0], false));
                 } else if (packet instanceof ClientboundPlayerChatPacket) {
-                    ClientboundPlayerChatPacket pkg = ((ClientboundPlayerChatPacket) packet);
-                    Component message = pkg.getUnsignedContent() == null ? pkg.getSignedContent() : pkg.getUnsignedContent();
-                    String plain = PlainTextComponentSerializer.plainText().serialize(message);
-                    plain = "<"+PlainTextComponentSerializer.plainText().serialize(pkg.getSenderName())+"> "+plain;
-//                    System.out.println("Received Message: " + plain);
-                    recv_msg_list.add(plain+"");
+                    ClientboundPlayerChatPacket cpcp = (ClientboundPlayerChatPacket) packet;
+                    String message = "<"+PlainTextComponentSerializer.plainText().serialize(cpcp.getName())+"> " + cpcp.getMessagePlain();
+                    System.out.println("Received Message: " + message);
+                    recv_msg_list.add(message);
                 }
             }
 
@@ -134,7 +133,7 @@ public class mcprotocollib implements base {
 
     @Override
     public boolean send_msg(String msg) {
-        this.client.send(new ServerboundChatPacket(msg, Instant.now().toEpochMilli(), 0, new byte[0], false));
+        this.client.send(new ServerboundChatPacket(msg, Instant.now().toEpochMilli(), 0, new byte[0], false,new ArrayList<>(),null));
         return false;
     }
 

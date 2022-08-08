@@ -135,6 +135,10 @@ public class utils {
                 re = new AMC();
                 break;
             case"1.19":
+            case"1.19.1":
+                utils.warning("暂未兼容的版本,如有需求,回退到v0.1.1");
+                return null;
+            case"1.19.2":
                 re = new mcprotocollib();
                 break;
             default:
